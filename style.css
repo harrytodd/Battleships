@@ -1,0 +1,124 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: rgb(192, 191, 191);
+}
+
+/* ********** PLAYER SCREEN ********** */
+
+.player {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.buttons {
+  width: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.length {
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.color {
+  display: none;
+  flex-wrap: wrap;
+  width: 200px;
+}
+
+.color-butt {
+  height: 75px;
+  width: 75px;
+  margin: 5px;
+  border: 3px solid #fff;
+  border-radius: 10px;
+}
+
+#red {
+  background-color: #ff0000;
+}
+
+#pink {
+  background-color: #ff65e5;
+}
+
+#black {
+  background-color: #464646;
+}
+
+#brown {
+  background-color: #79411c;
+}
+
+#blue {
+  background-color: #0000ff;
+}
+
+#orange {
+  background-color: #ffa500;
+}
+
+#cyan {
+  background-color: #00ffff;
+}
+
+#green {
+  background-color: #00b300;
+}
+
+.start-game {
+  display: none;
+}
+
+.cell {
+  height: 10%;
+  width: 10%;
+  border: 1px solid black;
+}
+
+.void {
+  border: none;
+  background-color: rgb(158, 158, 158);
+}
+
+/* ********** GRIDS ********** */
+
+.grids {
+  display: flex
+}
+
+.player-grid,
+.comp-grid {
+  height: 600px;
+  width: 600px;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.player-grid {
+  display: flex;
+}
+
+.comp-grid {
+  display: none;
+}
+
+/* ********** COMPUTER ********** */
+
+.computer {
+  display: none;
+}
