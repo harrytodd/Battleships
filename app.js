@@ -18,6 +18,10 @@ function init() {
   compGridGen()
   playerGrid.classList.add('show')
   lengthDiv.classList.add('show')
+  colorDiv.classList.remove('show')
+  placeShipDiv.classList.remove('show')
+  startGameDiv.classList.remove('show')
+  compGrid.classList.remove('show')
 }
 init()
 
