@@ -14,7 +14,7 @@ body {
 /* ********** PLAYER SCREEN ********** */
 
 .player {
-  display: flex;
+  display: none;
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -130,8 +130,25 @@ body {
   display: flex;
 }
 
+.comp-grid {
+  background-color: #a3b8f1;
+}
+
+#hit {
+  background-color: #000000;
+}
+
+#miss {
+  background-color: #ffffff;
+}
+
+#destroyed {
+  background-color: salmon;
+}
+
 /* ********** COMPUTER ********** */
 
 .computer {
   display: none;
 }
+
