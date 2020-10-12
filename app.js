@@ -5,6 +5,8 @@ const width = 10
 const playerWidth = width - 2
 const playerCells = []
 const playablePlayerCells = []
+const playablePlayerCellsIDs = []
+const allPlayerCells = []
 const compCells = []
 const playableCompCells = []
 //* Button Logic
@@ -53,6 +55,8 @@ function playerGridGen() {
       div.id = currNum.toString()
       currNum++
       playablePlayerCells.push(div)
+      allPlayerCells.push(div)
+      playablePlayerCellsIDs.push(Number(div.id))
     }
     playerCells.push(div)
     div.innerHTML = (div.id).toString()
@@ -87,15 +91,23 @@ function compGridGen() {
 class playerShips {
   constructor(length, color, orientation) {
     this.length = length,
-      this.color = color,
-      this.orientation = orientation,
-      this.position,
-      this.hitPositions = []
+    this.color = color,
+    this.orientation = orientation,
+    this.position,
+    this.hitPositions = []
   }
   shipDestroyed() {
     if (this.hitPositions.length === this.length) {
+      lastTurn = null
+      lastTurnCell = null
+      lastHit = null
+      firstHitCell = null
+      firstHitTurns = []
+      nextTurn = []
+      nextTurnCell = 0
+      nextTurnInd = null
       destroyedPlayerArr.push(this.length)
-      return this.position.forEach((el) => playablePlayerCells[el].id = 'destroyed')
+      return this.position.forEach((el) => allPlayerCells[el].id = 'destroyed')
     } else {
       return false
     }
@@ -111,9 +123,9 @@ let colorArr = ['red', 'pink', 'black', 'brown', 'blue', 'orange', 'cyan', 'gree
 class compShips {
   constructor(length) {
     this.length = length,
-      this.color = this.randomColor(),
-      this.orientation = this.randomOrientation(),
-      this.position = this.randomPosition()
+    this.color = this.randomColor(),
+    this.orientation = this.randomOrientation(),
+    this.position = this.randomPosition()
     this.hitPositions = []
   }
   randomColor() {
@@ -426,7 +438,6 @@ playableCompCells.forEach((el) => {
     } else {
       el.id = 'miss'
     }
-    console.log(destroyedCompArr)
     if (destroyedCompArr.length === 4) {
       console.log('YOU WIN')
     } else {
@@ -438,54 +449,214 @@ playableCompCells.forEach((el) => {
   }
 })
 
+let lastTurn = null
+let lastTurnCell = null
+let lastHit = null
+let firstHitCell = null
+let firstHitTurns = []
+let nextTurn = []
+let nextTurnCell = 0
+let nextTurnInd = null
+
 function compTurn() {
   compGrid.classList.remove('show')
   playerGrid.classList.add('show')
 
   setTimeout(() => {
-    const randomNum = Math.floor(Math.random() * playablePlayerCells.length)
-    const randomCell = playablePlayerCells[randomNum]
-    console.log('hi')
-    
 
-    if (randomCell.classList.contains('occupied')) {
-      if (randomCell.classList.contains('ship1')) {
-        ship1.hitPositions.push(randomCell.innerHTML)
-        if (ship1.shipDestroyed() === false) {
-          randomCell.id = 'hit'
+
+    if ((lastTurn === null || lastTurn === 'miss' && firstHitCell === null)) {
+      console.log('miss or start of game')
+      const randomNum = Math.floor(Math.random() * playablePlayerCells.length)
+      const randomCell = playablePlayerCells[randomNum]
+      const randomCellHTMLNum = Number(randomCell.innerHTML)
+      console.log(randomCell.innerHTML)
+      
+
+      if (randomCell.classList.contains('occupied')) {
+        lastTurn = 'hit'
+        lastHit = randomCellHTMLNum
+        firstHitCell = randomCellHTMLNum
+
+        const indOfNextTurn = playablePlayerCellsIDs.indexOf(randomCellHTMLNum)
+        nextTurnCell = playablePlayerCells[indOfNextTurn]
+        
+
+        if (randomCellHTMLNum === 0) { // 0
+          firstHitTurns.push(randomCellHTMLNum + 1, randomCellHTMLNum + playerWidth)
+          nextTurn.push(randomCellHTMLNum + 1, randomCellHTMLNum + playerWidth)
+        } else if (randomCellHTMLNum === (playerWidth ** 2) - playerWidth) { // 56
+          firstHitTurns.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum + 1)
+          nextTurn.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum + 1)
+        } else if (randomCellHTMLNum % playerWidth === 0 && randomCellHTMLNum !== 0 && randomCellHTMLNum !== (playerWidth ** 2) - playerWidth) { // 8 16 24 32 40 48
+          firstHitTurns.push(randomCellHTMLNum + 1, randomCellHTMLNum - playerWidth, randomCellHTMLNum + playerWidth)
+          nextTurn.push(randomCellHTMLNum + 1, randomCellHTMLNum - playerWidth, randomCellHTMLNum + playerWidth)
+        } else if (randomCellHTMLNum > 0 && randomCellHTMLNum < playerWidth - 1) { // 1 - 6
+          firstHitTurns.push(randomCellHTMLNum - 1, randomCellHTMLNum + 1, randomCellHTMLNum + playerWidth)
+          nextTurn.push(randomCellHTMLNum - 1, randomCellHTMLNum + 1, randomCellHTMLNum + playerWidth)
+        } else if (randomCellHTMLNum > (playerWidth ** 2) - playerWidth && randomCellHTMLNum < (playerWidth ** 2) - 1) { // 57 - 62
+          firstHitTurns.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum + 1, randomCellHTMLNum - 1)
+          nextTurn.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum + 1, randomCellHTMLNum - 1)
+        } else if (randomCellHTMLNum % playerWidth === playerWidth - 1 && randomCellHTMLNum !== playerWidth - 1 && randomCellHTMLNum !== (playerWidth ** 2) - 1) { // 15 23 31 39 47 55
+          firstHitTurns.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum + playerWidth, randomCellHTMLNum - 1)
+          nextTurn.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum + playerWidth, randomCellHTMLNum - 1)
+        } else if (randomCellHTMLNum === (playerWidth ** 2) - 1) { // 63
+          firstHitTurns.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum - 1)
+          nextTurn.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum - 1)
+        } else { // all cells inside the outer ring
+          firstHitTurns.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum + 1, randomCellHTMLNum + playerWidth, randomCellHTMLNum - 1)
+          nextTurn.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum + 1, randomCellHTMLNum + playerWidth, randomCellHTMLNum - 1)
         }
-      } else if (randomCell.classList.contains('ship2')) {
-        ship2.hitPositions.push(randomCell.innerHTML)
-        if (ship2.shipDestroyed() === false) {
-          randomCell.id = 'hit'
+
+        firstHitTurns.filter((el) => {
+          return playablePlayerCells.forEach(ele => el === ele.id)
+        })
+        nextTurn.filter((el) => {
+          return playablePlayerCells.forEach(ele => el === ele.id)
+        })
+
+        if (randomCell.classList.contains('ship1')) {
+          ship1.hitPositions.push(randomCell.innerHTML)
+          if (ship1.shipDestroyed() === false) {
+            randomCell.id = 'hit'
+          }
+        } else if (randomCell.classList.contains('ship2')) {
+          ship2.hitPositions.push(randomCell.innerHTML)
+          if (ship2.shipDestroyed() === false) {
+            randomCell.id = 'hit'
+          }
+        } else if (randomCell.classList.contains('ship3')) {
+          ship3.hitPositions.push(randomCell.innerHTML)
+          if (ship3.shipDestroyed() === false) {
+            randomCell.id = 'hit'
+          }
+        } else if (randomCell.classList.contains('ship4')) {
+          ship4.hitPositions.push(randomCell.innerHTML)
+          if (ship4.shipDestroyed() === false) {
+            randomCell.id = 'hit'
+          }
         }
-      } else if (randomCell.classList.contains('ship3')) {
-        ship3.hitPositions.push(randomCell.innerHTML)
-        if (ship3.shipDestroyed() === false) {
-          randomCell.id = 'hit'
-        }
-      } else if (randomCell.classList.contains('ship4')) {
-        ship4.hitPositions.push(randomCell.innerHTML)
-        if (ship4.shipDestroyed() === false) {
-          randomCell.id = 'hit'
-        }
+      } else {
+        randomCell.id = 'miss'
+        lastTurn = 'miss'
       }
-    } else {
-      randomCell.id = 'miss'
-    }
-    console.log(destroyedPlayerArr)
+      playablePlayerCells.splice(randomNum, 1)
+      playablePlayerCellsIDs.splice(randomNum, 1)
+      lastTurnCell = randomCellHTMLNum
 
+    } else if (lastTurn === 'miss' && firstHitCell !== null) {
+      console.log('miss but we have a first hit')
+      
+      if (Number(nextTurnCell.id) === firstHitCell) {
+        if ((lastTurnCell - firstHitCell) < 4 && (lastTurnCell - firstHitCell) > 0) {
+          const indOfNextTurn = playablePlayerCellsIDs.indexOf(firstHitCell - 1)
+          nextTurnCell = playablePlayerCells[indOfNextTurn]
+        } else if ((lastTurnCell - firstHitCell) >= playerWidth) {
+          const indOfNextTurn = playablePlayerCellsIDs.indexOf(firstHitCell - playerWidth)
+          nextTurnCell = playablePlayerCells[indOfNextTurn]
+        } else if ((lastTurnCell - firstHitCell) < 0 && (lastTurnCell - firstHitCell) > -4) {
+          const indOfNextTurn = playablePlayerCellsIDs.indexOf(firstHitCell + 1)
+          nextTurnCell = playablePlayerCells[indOfNextTurn]
+        } else {
+          const indOfNextTurn = playablePlayerCellsIDs.indexOf(firstHitCell + playerWidth)
+          nextTurnCell = playablePlayerCells[indOfNextTurn]
+        }
+        lastTurnCell = Number(nextTurnCell.id)
+        checkNextCell()
+      } else {
+        nextTurn.splice(nextTurnInd, 1)
+        console.log(nextTurn)
+        nextTurnInd = Math.floor(Math.random() * nextTurn.length)
+        const randomNextTurnCell = nextTurn[nextTurnInd]
+        const indOfNextTurn = playablePlayerCellsIDs.indexOf(randomNextTurnCell)
+        nextTurnCell = playablePlayerCells[indOfNextTurn]
+
+        lastTurnCell = Number(nextTurnCell.id)
+        checkNextCell()
+        playablePlayerCells.splice(indOfNextTurn, 1)
+        playablePlayerCellsIDs.splice(indOfNextTurn, 1)
+      }
+ 
+    } else if (lastTurn === 'hit') {
+      console.log('hit', nextTurn)
+      if (firstHitCell === lastHit) {
+        console.log('first and last hit are the same')
+        nextTurnInd = Math.floor(Math.random() * nextTurn.length)
+        const randomNextTurnCell = nextTurn[nextTurnInd]
+        const indOfNextTurn = playablePlayerCellsIDs.indexOf(randomNextTurnCell)
+        nextTurnCell = playablePlayerCells[indOfNextTurn]
+        lastTurnCell = Number(nextTurnCell.id)
+        checkNextCell()
+      } else if (firstHitCell !== lastHit) {
+        nextTurn = []
+        console.log('first and last hit are different', nextTurn)
+        if ((lastTurnCell - firstHitCell) < 4 && (lastTurnCell - firstHitCell) > 0) {
+          const indOfNextTurn = playablePlayerCellsIDs.indexOf(lastHit - 1)
+          nextTurnCell = playablePlayerCells[indOfNextTurn]
+          console.log(nextTurnCell)
+        } else if ((lastTurnCell - firstHitCell) >= playerWidth) {
+          const indOfNextTurn = playablePlayerCellsIDs.indexOf(lastHit - playerWidth)
+          nextTurnCell = playablePlayerCells[indOfNextTurn]
+          console.log(nextTurnCell)
+        } else if ((lastTurnCell - firstHitCell) < 0 && (lastTurnCell - firstHitCell) > -4) {
+          const indOfNextTurn = playablePlayerCellsIDs.indexOf(lastHit + 1)
+          nextTurnCell = playablePlayerCells[indOfNextTurn]
+          console.log(nextTurnCell)
+        } else if ((lastTurnCell - firstHitCell) <= -playerWidth){
+          const indOfNextTurn = playablePlayerCellsIDs.indexOf(lastHit + playerWidth)
+          nextTurnCell = playablePlayerCells[indOfNextTurn]
+          console.log(nextTurnCell)
+        } else {
+          console.log('caught you')
+        }
+        lastTurnCell = Number(nextTurnCell.id)
+        checkNextCell()
+      }
+    }
+    
     if (destroyedPlayerArr.length === 4) {
       console.log('YOU LOSE')
     } else {
-      nextTurn()
+      nextPlayer()
     }
-    playablePlayerCells.splice(randomNum, 1)
   }, 1000)
-
 }
-function nextTurn() {
+function nextPlayer() {
   setTimeout(() => {
     playerTurn()
   }, 2000)
 }
+
+function checkNextCell() {
+  if (nextTurnCell.classList.contains('ship1')) {
+    ship1.hitPositions.push(nextTurnCell.innerHTML)
+    if (ship1.shipDestroyed() === false) {
+      nextTurnCell.id = 'hit'
+      lastTurn = 'hit'
+    }
+  } else if (nextTurnCell.classList.contains('ship2')) {
+    ship2.hitPositions.push(nextTurnCell.innerHTML)
+    if (ship2.shipDestroyed() === false) {
+      nextTurnCell.id = 'hit'
+      lastTurn = 'hit'
+    }
+  } else if (nextTurnCell.classList.contains('ship3')) {
+    ship3.hitPositions.push(nextTurnCell.innerHTML)
+    if (ship3.shipDestroyed() === false) {
+      nextTurnCell.id = 'hit'
+      lastTurn = 'hit'
+    }
+  } else if (nextTurnCell.classList.contains('ship4')) {
+    ship4.hitPositions.push(nextTurnCell.innerHTML)
+    if (ship4.shipDestroyed() === false) {
+      nextTurnCell.id = 'hit'
+      lastTurn = 'hit'
+    }
+  } else {
+    nextTurnCell.id = 'miss'
+    lastTurn = 'miss'
+  }
+  lastHit = Number(nextTurnCell.innerHTML)
+  console.log(lastHit)
+}
+
