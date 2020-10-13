@@ -91,20 +91,24 @@ function compGridGen() {
 class playerShips {
   constructor(length, color, orientation) {
     this.length = length,
-    this.color = color,
-    this.orientation = orientation,
-    this.position,
-    this.hitPositions = []
+      this.color = color,
+      this.orientation = orientation,
+      this.position,
+      this.hitPositions = []
   }
   shipDestroyed() {
     if (this.hitPositions.length === this.length) {
       lastTurn = null
       lastTurnCell = null
       lastHit = null
+      lastHitCell = null
       firstHitCell = null
+      firstHitCellID = null
+      randomFirstHitTurn
       firstHitTurns = []
-      nextTurn = []
-      nextTurnCell = 0
+      firstHitTurnsFilt = []
+      nextTurns = null
+      nextTurnCell = 0 // HTML cell
       nextTurnInd = null
       destroyedPlayerArr.push(this.length)
       return this.position.forEach((el) => allPlayerCells[el].id = 'destroyed')
@@ -123,9 +127,9 @@ let colorArr = ['red', 'pink', 'black', 'brown', 'blue', 'orange', 'cyan', 'gree
 class compShips {
   constructor(length) {
     this.length = length,
-    this.color = this.randomColor(),
-    this.orientation = this.randomOrientation(),
-    this.position = this.randomPosition()
+      this.color = this.randomColor(),
+      this.orientation = this.randomOrientation(),
+      this.position = this.randomPosition()
     this.hitPositions = []
   }
   randomColor() {
@@ -452,10 +456,14 @@ playableCompCells.forEach((el) => {
 let lastTurn = null
 let lastTurnCell = null
 let lastHit = null
+let lastHitCell = null
 let firstHitCell = null
+let firstHitCellID = null
+let randomFirstHitTurn
 let firstHitTurns = []
-let nextTurn = []
-let nextTurnCell = 0
+let firstHitTurnsFilt = []
+let nextTurns = null
+let nextTurnCell = 0 // HTML cell
 let nextTurnInd = null
 
 function compTurn() {
@@ -464,156 +472,53 @@ function compTurn() {
 
   setTimeout(() => {
 
-
-    if ((lastTurn === null || lastTurn === 'miss' && firstHitCell === null)) {
-      console.log('miss or start of game')
+    console.log(nextTurns)
+    if (lastTurnCell === null || (lastTurn === 'miss' && firstHitCell === null)) {
       const randomNum = Math.floor(Math.random() * playablePlayerCells.length)
+      nextTurnInd = randomNum
       const randomCell = playablePlayerCells[randomNum]
-      const randomCellHTMLNum = Number(randomCell.innerHTML)
-      console.log(randomCell.innerHTML)
-      
-
-      if (randomCell.classList.contains('occupied')) {
-        lastTurn = 'hit'
-        lastHit = randomCellHTMLNum
-        firstHitCell = randomCellHTMLNum
-
-        const indOfNextTurn = playablePlayerCellsIDs.indexOf(randomCellHTMLNum)
-        nextTurnCell = playablePlayerCells[indOfNextTurn]
-        
-
-        if (randomCellHTMLNum === 0) { // 0
-          firstHitTurns.push(randomCellHTMLNum + 1, randomCellHTMLNum + playerWidth)
-          nextTurn.push(randomCellHTMLNum + 1, randomCellHTMLNum + playerWidth)
-        } else if (randomCellHTMLNum === (playerWidth ** 2) - playerWidth) { // 56
-          firstHitTurns.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum + 1)
-          nextTurn.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum + 1)
-        } else if (randomCellHTMLNum % playerWidth === 0 && randomCellHTMLNum !== 0 && randomCellHTMLNum !== (playerWidth ** 2) - playerWidth) { // 8 16 24 32 40 48
-          firstHitTurns.push(randomCellHTMLNum + 1, randomCellHTMLNum - playerWidth, randomCellHTMLNum + playerWidth)
-          nextTurn.push(randomCellHTMLNum + 1, randomCellHTMLNum - playerWidth, randomCellHTMLNum + playerWidth)
-        } else if (randomCellHTMLNum > 0 && randomCellHTMLNum < playerWidth - 1) { // 1 - 6
-          firstHitTurns.push(randomCellHTMLNum - 1, randomCellHTMLNum + 1, randomCellHTMLNum + playerWidth)
-          nextTurn.push(randomCellHTMLNum - 1, randomCellHTMLNum + 1, randomCellHTMLNum + playerWidth)
-        } else if (randomCellHTMLNum > (playerWidth ** 2) - playerWidth && randomCellHTMLNum < (playerWidth ** 2) - 1) { // 57 - 62
-          firstHitTurns.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum + 1, randomCellHTMLNum - 1)
-          nextTurn.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum + 1, randomCellHTMLNum - 1)
-        } else if (randomCellHTMLNum % playerWidth === playerWidth - 1 && randomCellHTMLNum !== playerWidth - 1 && randomCellHTMLNum !== (playerWidth ** 2) - 1) { // 15 23 31 39 47 55
-          firstHitTurns.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum + playerWidth, randomCellHTMLNum - 1)
-          nextTurn.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum + playerWidth, randomCellHTMLNum - 1)
-        } else if (randomCellHTMLNum === (playerWidth ** 2) - 1) { // 63
-          firstHitTurns.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum - 1)
-          nextTurn.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum - 1)
-        } else { // all cells inside the outer ring
-          firstHitTurns.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum + 1, randomCellHTMLNum + playerWidth, randomCellHTMLNum - 1)
-          nextTurn.push(randomCellHTMLNum - playerWidth, randomCellHTMLNum + 1, randomCellHTMLNum + playerWidth, randomCellHTMLNum - 1)
-        }
-
-        firstHitTurns.filter((el) => {
-          return playablePlayerCells.forEach(ele => el === ele.id)
-        })
-        nextTurn.filter((el) => {
-          return playablePlayerCells.forEach(ele => el === ele.id)
-        })
-
-        if (randomCell.classList.contains('ship1')) {
-          ship1.hitPositions.push(randomCell.innerHTML)
-          if (ship1.shipDestroyed() === false) {
-            randomCell.id = 'hit'
-          }
-        } else if (randomCell.classList.contains('ship2')) {
-          ship2.hitPositions.push(randomCell.innerHTML)
-          if (ship2.shipDestroyed() === false) {
-            randomCell.id = 'hit'
-          }
-        } else if (randomCell.classList.contains('ship3')) {
-          ship3.hitPositions.push(randomCell.innerHTML)
-          if (ship3.shipDestroyed() === false) {
-            randomCell.id = 'hit'
-          }
-        } else if (randomCell.classList.contains('ship4')) {
-          ship4.hitPositions.push(randomCell.innerHTML)
-          if (ship4.shipDestroyed() === false) {
-            randomCell.id = 'hit'
-          }
-        }
-      } else {
-        randomCell.id = 'miss'
-        lastTurn = 'miss'
-      }
-      playablePlayerCells.splice(randomNum, 1)
-      playablePlayerCellsIDs.splice(randomNum, 1)
-      lastTurnCell = randomCellHTMLNum
-
+      nextTurnCell = randomCell
+      checkNextCell()
+    } else if (lastTurn === 'hit' && firstHitCell === null) {
+      firstHitCell = lastTurnCell
+      firstHitCellID = Number(firstHitCell.innerHTML)
+      nextToFirstHitCell()
     } else if (lastTurn === 'miss' && firstHitCell !== null) {
-      console.log('miss but we have a first hit')
-      
-      if (Number(nextTurnCell.id) === firstHitCell) {
-        if ((lastTurnCell - firstHitCell) < 4 && (lastTurnCell - firstHitCell) > 0) {
-          const indOfNextTurn = playablePlayerCellsIDs.indexOf(firstHitCell - 1)
-          nextTurnCell = playablePlayerCells[indOfNextTurn]
-        } else if ((lastTurnCell - firstHitCell) >= playerWidth) {
-          const indOfNextTurn = playablePlayerCellsIDs.indexOf(firstHitCell - playerWidth)
-          nextTurnCell = playablePlayerCells[indOfNextTurn]
-        } else if ((lastTurnCell - firstHitCell) < 0 && (lastTurnCell - firstHitCell) > -4) {
-          const indOfNextTurn = playablePlayerCellsIDs.indexOf(firstHitCell + 1)
-          nextTurnCell = playablePlayerCells[indOfNextTurn]
-        } else {
-          const indOfNextTurn = playablePlayerCellsIDs.indexOf(firstHitCell + playerWidth)
-          nextTurnCell = playablePlayerCells[indOfNextTurn]
+      if (lastHitCell === firstHitCell) {
+        console.log('last cell is first cell ' + firstHitTurnsFilt)
+        firstHitTurnsFilt.splice(randomFirstHitTurn, 1)
+        console.log('after splice ' + firstHitTurnsFilt)
+        randomFirstHitTurn = Math.floor(Math.random() * firstHitTurnsFilt.length)
+        console.log(firstHitTurnsFilt[randomFirstHitTurn])
+
+        if (firstHitTurnsFilt[randomFirstHitTurn] === 'up') {
+          nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID - playerWidth)
+          nextTurns = 'up'
+          console.log('up')
+        } else if (firstHitTurnsFilt[randomFirstHitTurn] === 'right') {
+          nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID + 1)
+          nextTurns = 'right'
+          console.log('right')
+        } else if (firstHitTurnsFilt[randomFirstHitTurn] === 'down') {
+          nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID + playerWidth)
+          nextTurns = 'down'
+          console.log('down')
+        } else if (firstHitTurnsFilt[randomFirstHitTurn] === 'left') {
+          nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID - 1)
+          nextTurns = 'left'
+          console.log('left')
         }
-        lastTurnCell = Number(nextTurnCell.id)
+
+        nextTurnCell = playablePlayerCells[nextTurnInd]
+        console.log(nextTurnCell.innerHTML)
         checkNextCell()
       } else {
-        nextTurn.splice(nextTurnInd, 1)
-        console.log(nextTurn)
-        nextTurnInd = Math.floor(Math.random() * nextTurn.length)
-        const randomNextTurnCell = nextTurn[nextTurnInd]
-        const indOfNextTurn = playablePlayerCellsIDs.indexOf(randomNextTurnCell)
-        nextTurnCell = playablePlayerCells[indOfNextTurn]
-
-        lastTurnCell = Number(nextTurnCell.id)
-        checkNextCell()
-        playablePlayerCells.splice(indOfNextTurn, 1)
-        playablePlayerCellsIDs.splice(indOfNextTurn, 1)
+        keepGoingThatDirection()
       }
- 
-    } else if (lastTurn === 'hit') {
-      console.log('hit', nextTurn)
-      if (firstHitCell === lastHit) {
-        console.log('first and last hit are the same')
-        nextTurnInd = Math.floor(Math.random() * nextTurn.length)
-        const randomNextTurnCell = nextTurn[nextTurnInd]
-        const indOfNextTurn = playablePlayerCellsIDs.indexOf(randomNextTurnCell)
-        nextTurnCell = playablePlayerCells[indOfNextTurn]
-        lastTurnCell = Number(nextTurnCell.id)
-        checkNextCell()
-      } else if (firstHitCell !== lastHit) {
-        nextTurn = []
-        console.log('first and last hit are different', nextTurn)
-        if ((lastTurnCell - firstHitCell) < 4 && (lastTurnCell - firstHitCell) > 0) {
-          const indOfNextTurn = playablePlayerCellsIDs.indexOf(lastHit - 1)
-          nextTurnCell = playablePlayerCells[indOfNextTurn]
-          console.log(nextTurnCell)
-        } else if ((lastTurnCell - firstHitCell) >= playerWidth) {
-          const indOfNextTurn = playablePlayerCellsIDs.indexOf(lastHit - playerWidth)
-          nextTurnCell = playablePlayerCells[indOfNextTurn]
-          console.log(nextTurnCell)
-        } else if ((lastTurnCell - firstHitCell) < 0 && (lastTurnCell - firstHitCell) > -4) {
-          const indOfNextTurn = playablePlayerCellsIDs.indexOf(lastHit + 1)
-          nextTurnCell = playablePlayerCells[indOfNextTurn]
-          console.log(nextTurnCell)
-        } else if ((lastTurnCell - firstHitCell) <= -playerWidth){
-          const indOfNextTurn = playablePlayerCellsIDs.indexOf(lastHit + playerWidth)
-          nextTurnCell = playablePlayerCells[indOfNextTurn]
-          console.log(nextTurnCell)
-        } else {
-          console.log('caught you')
-        }
-        lastTurnCell = Number(nextTurnCell.id)
-        checkNextCell()
-      }
+    } else if (lastTurn === 'hit' && lastTurnCell !== firstHitCell) {
+      keepGoingThatDirection()
     }
-    
+
     if (destroyedPlayerArr.length === 4) {
       console.log('YOU LOSE')
     } else {
@@ -628,35 +533,174 @@ function nextPlayer() {
 }
 
 function checkNextCell() {
+  lastTurnCell = nextTurnCell
+  playablePlayerCells.splice(nextTurnInd, 1)
+  playablePlayerCellsIDs.splice(nextTurnInd, 1)
+  // console.log('lastTurnCell: ' + lastTurnCell.innerHTML + ' ===== nextTurnCell: ' + nextTurnCell.innerHTML)
   if (nextTurnCell.classList.contains('ship1')) {
     ship1.hitPositions.push(nextTurnCell.innerHTML)
     if (ship1.shipDestroyed() === false) {
       nextTurnCell.id = 'hit'
       lastTurn = 'hit'
+      lastHit = Number(nextTurnCell.innerHTML)
+      lastHitCell = nextTurnCell
     }
   } else if (nextTurnCell.classList.contains('ship2')) {
     ship2.hitPositions.push(nextTurnCell.innerHTML)
     if (ship2.shipDestroyed() === false) {
       nextTurnCell.id = 'hit'
       lastTurn = 'hit'
+      lastHit = Number(nextTurnCell.innerHTML)
+      lastHitCell = nextTurnCell
     }
   } else if (nextTurnCell.classList.contains('ship3')) {
     ship3.hitPositions.push(nextTurnCell.innerHTML)
     if (ship3.shipDestroyed() === false) {
       nextTurnCell.id = 'hit'
       lastTurn = 'hit'
+      lastHit = Number(nextTurnCell.innerHTML)
+      lastHitCell = nextTurnCell
     }
   } else if (nextTurnCell.classList.contains('ship4')) {
     ship4.hitPositions.push(nextTurnCell.innerHTML)
     if (ship4.shipDestroyed() === false) {
       nextTurnCell.id = 'hit'
       lastTurn = 'hit'
+      lastHit = Number(nextTurnCell.innerHTML)
+      lastHitCell = nextTurnCell
     }
   } else {
     nextTurnCell.id = 'miss'
     lastTurn = 'miss'
   }
-  lastHit = Number(nextTurnCell.innerHTML)
-  console.log(lastHit)
 }
 
+function nextToFirstHitCell() {
+
+  if (firstHitCellID === 0) { // 0
+    firstHitTurns.push('right', 'down')
+    console.log('0')
+  } else if (firstHitCellID % playerWidth === 0 && firstHitCellID !== 0 && firstHitCellID !== (playerWidth ** 2) - playerWidth) { // down left side
+    firstHitTurns.push('up', 'right', 'down')
+    console.log('down left side')
+  } else if (firstHitCellID === (playerWidth ** 2) - playerWidth) { // 56
+    firstHitTurns.push('up', 'right')
+    console.log('56')
+  } else if (firstHitCellID > (playerWidth ** 2) - playerWidth && firstHitCellID < playerWidth ** 2) { // bottom row
+    firstHitTurns.push('up', 'right', 'left')
+    console.log('bottom row')
+  } else if (firstHitCellID === (playerWidth ** 2) - 1) { // 63
+    firstHitTurns.push('up', 'left')
+    console.log('63')
+  } else if (firstHitCellID % playerWidth === playerWidth - 1 && firstHitCellID !== (playerWidth ** 2) - 1 && firstHitCellID !== playerWidth - 1) { // down right side
+    firstHitTurns.push('up', 'down', 'left')
+    console.log('down right side')
+  } else if (firstHitCellID === playerWidth - 1) { // 7
+    firstHitTurns.push('down', 'left')
+    console.log('7')
+  } else if (firstHitCellID > 0 && firstHitCellID < playerWidth - 1) { // top row
+    firstHitTurns.push('right', 'down', 'left')
+    console.log('top row')
+  } else { // everything else
+    firstHitTurns.push('up', 'right', 'down', 'left')
+    console.log('middle')
+  }
+
+  console.log(firstHitTurns)
+  firstHitTurns.forEach((el, ind, arr) => {
+    if (el === 'up') {
+      if (playablePlayerCellsIDs.includes(firstHitCellID - playerWidth)) {
+        return
+      } else {
+        console.log(el + ' is not available')
+        arr[ind] = 'occupied'
+      }
+    } else if (el === 'right') {
+      if (playablePlayerCellsIDs.includes(firstHitCellID + 1)) {
+        return
+      } else {
+        console.log(el + ' is not available')
+        arr[ind] = 'occupied'
+      }
+    } else if (el === 'down') {
+      if (playablePlayerCellsIDs.includes(firstHitCellID + playerWidth)) {
+        return
+      } else {
+        console.log(el + ' is not available')
+        arr[ind] = 'occupied'
+      }
+    } else if (el === 'left') {
+      if (playablePlayerCellsIDs.includes(firstHitCellID - 1)) {
+        return
+      } else {
+        console.log(el + ' is not available')
+        arr[ind] = 'occupied'
+      }
+    }
+  })
+  console.log(firstHitTurns)
+
+  firstHitTurnsFilt = firstHitTurns.filter(el => el.length < 7)
+
+  console.log(firstHitTurnsFilt)
+
+  randomFirstHitTurn = Math.floor(Math.random() * firstHitTurnsFilt.length)
+  if (firstHitTurnsFilt[randomFirstHitTurn] === 'up') {
+    nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID - playerWidth)
+  } else if (firstHitTurnsFilt[randomFirstHitTurn] === 'right') {
+    nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID + 1)
+  } else if (firstHitTurnsFilt[randomFirstHitTurn] === 'down') {
+    nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID + playerWidth)
+  } else if (firstHitTurnsFilt[randomFirstHitTurn] === 'left') {
+    nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID - 1)
+  }
+  nextTurns = firstHitTurnsFilt[randomFirstHitTurn]
+  nextTurnCell = playablePlayerCells[nextTurnInd]
+  checkNextCell()
+}
+
+function keepGoingThatDirection() {
+  console.log('keep going')
+  let lastTurnCellID = Number(lastTurnCell.innerHTML)
+  if (nextTurns === 'up') {
+    if (lastTurn === 'hit') {
+      nextTurnInd = playablePlayerCellsIDs.indexOf(lastTurnCellID - playerWidth)
+      console.log('keep going up')
+    } else {
+      nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID + playerWidth)
+      nextTurns = 'down'
+      console.log('cant go up so go down from first')
+    }
+  } else if (nextTurns === 'right') {
+    if (lastTurn === 'hit') {
+      nextTurnInd = playablePlayerCellsIDs.indexOf(lastTurnCellID + 1)
+      console.log('keep going right')
+    } else {
+      nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID - 1)
+      nextTurns = 'left'
+      console.log('cant go right so go left from first')
+    }
+  } else if (nextTurns === 'down') {
+    if (lastTurn === 'hit') {
+      nextTurnInd = playablePlayerCellsIDs.indexOf(lastTurnCellID + playerWidth)
+      console.log('keep going down')
+    } else {
+      nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID - playerWidth)
+      nextTurns = 'up'
+      console.log('cant go down so go up from first')
+    }
+  } else if (nextTurns === 'left') {
+    if (lastTurn === 'hit') {
+      nextTurnInd = playablePlayerCellsIDs.indexOf(lastTurnCellID - 1)
+      console.log('keep going left')
+    } else {
+      nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID + 1)
+      nextTurns = 'right'
+      console.log('cant go left so go right from first')
+    }
+  }
+
+  nextTurnCell = playablePlayerCells[nextTurnInd]
+
+  checkNextCell()
+}
