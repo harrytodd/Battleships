@@ -1,4 +1,5 @@
 //* Grid Generator
+const gridSection = document.querySelector('.grids')
 const playerGrid = document.querySelector('.player-grid')
 const compGrid = document.querySelector('.comp-grid')
 const width = 10
@@ -16,8 +17,10 @@ const confirmPlaceButt = document.querySelector('.confirm')
 const startGameButt = document.querySelector('.start-butt')
 const lengthDiv = document.querySelector('.length')
 const colorDiv = document.querySelector('.color')
+const orientationDiv = document.querySelector('.orientation')
 const placeShipDiv = document.querySelector('.place-ship')
 const startGameDiv = document.querySelector('.start-game')
+const body = document.body
 //* Ship Placement 
 const horizontalButt = document.querySelector('.horizontal')
 const verticalButt = document.querySelector('.vertical')
@@ -28,12 +31,15 @@ function init() {
   playerGridGen()
   compGridGen()
   buttonSection.classList.add('show')
-  playerGrid.classList.add('show')
   lengthDiv.classList.add('show')
+  playerGrid.classList.add('show')
+  gridSection.classList.remove('show')
   colorDiv.classList.remove('show')
+  orientationDiv.classList.remove('show')
   placeShipDiv.classList.remove('show')
   startGameDiv.classList.remove('show')
   compGrid.classList.remove('show')
+  console.log(horizontalButt)
 }
 init()
 
@@ -93,8 +99,8 @@ class playerShips {
     this.length = length,
       this.color = color,
       this.orientation = orientation,
-      this.position,
-      this.hitPositions = []
+      this.position
+    this.hitPositions = []
   }
   shipDestroyed() {
     if (this.hitPositions.length === this.length) {
@@ -274,7 +280,7 @@ colorButtonsArr.forEach((el) => {
   el.addEventListener('click', colorButts)
   function colorButts() {
     colorDiv.classList.remove('show')
-    placeShipDiv.classList.add('show')
+    orientationDiv.classList.add('show')
     currShip.color = el.id
     el.removeEventListener('click', colorButts)
     el.id = 'color-hide'
@@ -301,10 +307,18 @@ startGameButt.addEventListener('click', () => {
 //* ********** PLAYER SHIP PLACEMENT **********
 horizontalButt.addEventListener('click', () => {
   currShip.orientation = 'horizontal'
+  orientationDiv.classList.remove('show')
+  placeShipDiv.classList.add('show')
+  gridSection.classList.add('show')
+  body.classList.add('column')
 })
 
 verticalButt.addEventListener('click', () => {
   currShip.orientation = 'vertical'
+  orientationDiv.classList.remove('show')
+  placeShipDiv.classList.add('show')
+  gridSection.classList.add('show')
+  body.classList.add('column')
 })
 
 
@@ -332,7 +346,6 @@ playablePlayerCells.forEach((el) => {
             playablePlayerCells[i].id = currShip.color
             playablePlayerCells[i].classList.add('occupied')
             playablePlayerCells[i].classList.add(`ship${currShip.length}`)
-            el.removeEventListener('click', addShip)
           }
 
           currShip.position = []
@@ -364,7 +377,6 @@ playablePlayerCells.forEach((el) => {
             playablePlayerCells[i].id = currShip.color
             playablePlayerCells[i].classList.add('occupied')
             playablePlayerCells[i].classList.add(`ship${currShip.length}`)
-            el.removeEventListener('click', addShip)
           }
 
           currShip.position = []
@@ -378,6 +390,22 @@ playablePlayerCells.forEach((el) => {
         return
       }
     }
+    setTimeout(() => {
+      let allTrue = 0
+      lengthButtonsArr.forEach((el) => el.classList.contains('selected') ? allTrue++ : true)
+      if (allTrue === 4) {
+        startGameDiv.classList.add('show')
+        placeShipDiv.classList.remove('show')
+        gridSection.classList.remove('show')
+        body.classList.remove('column')
+      } else {
+        lengthDiv.classList.add('show')
+        placeShipDiv.classList.remove('show')
+        gridSection.classList.remove('show')
+        body.classList.remove('column')
+      }
+    }, 1000)
+
   }
 })
 

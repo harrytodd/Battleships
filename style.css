@@ -43,7 +43,7 @@ body {
 .color {
   display: none;
   flex-wrap: wrap;
-  width: 200px;
+  width: 170px;
 }
 
 .color-butt {
@@ -91,7 +91,7 @@ body {
   border: none;
 }
 
-.place-ship {
+.orientation {
   display: none;
   flex-direction: column;
 }
@@ -111,10 +111,14 @@ body {
   background-color: #9e9e9e;
 }
 
+.place-ship {
+  display: none;
+}
+
 /* ********** GRIDS ********** */
 
 .grids {
-  display: flex
+  display: none;
 }
 
 .player-grid,
@@ -128,6 +132,10 @@ body {
 
 .show {
   display: flex;
+}
+
+.column {
+  flex-direction: column;
 }
 
 .comp-grid {
