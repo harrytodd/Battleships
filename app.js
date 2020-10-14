@@ -49,6 +49,8 @@ function init() {
   orientationDiv.classList.remove('show')
   startGameDiv.classList.remove('show')
   compGrid.classList.remove('show')
+  winnerSection.classList.remove('show')
+  loserSection.classList.remove('show')
 }
 init()
 
