@@ -1,3 +1,14 @@
+@font-face {
+  font-family: AmongUs1; src: url(./among-us1.ttf);
+}
+
+@font-face {
+  font-family: AmongUs2; src: url(./among-us2.ttf);
+}
+
+
+
+
 * {
   box-sizing: border-box;
 }
@@ -8,7 +19,13 @@ body {
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
-  background-color: #c0bfbf;
+  background-image: url(./images/background1.jpg);
+  background-size: cover;
+  background-color: black;
+}
+.no-image {
+  background-image: none;
+  background-color: black;
 }
 
 /* ********** PLAYER SCREEN ********** */
@@ -29,10 +46,30 @@ body {
 }
 
 .length {
-  width: 200px;
+  width: 300px;
+  height: 100vh;
   display: none;
   flex-direction: column;
-  justify-content: space-around;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.length-butt {
+  width: 200px;
+  height: 75px;
+  border: 3px solid white;
+  border-radius: 10px;
+  background-color: black;
+  color: white;
+  font-family: AmongUs2;
+  font-size: 30px;
+  box-shadow: 0 5px 0 #dbdbdb;
+}
+
+h1 {
+  font-family: 'AmongUs1', sans-serif;
+  color: white;
+  font-size: 50px;
 }
 
 .selected {
@@ -42,8 +79,21 @@ body {
 
 .color {
   display: none;
-  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.color-h1 {
+  width: 300px;
+  display: flex;
+  justify-content: center;
+}
+
+.color-buttons {
   width: 170px;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 .color-butt {
@@ -52,63 +102,205 @@ body {
   margin: 5px;
   border: 3px solid #fff;
   border-radius: 10px;
+  background-color: black;
 }
 
 #red {
-  background-color: #ff0000;
+  background-image: url(./images/red-char.png);
+  background-size: contain;
+  background-position: center;
+}
+
+#hit-red {
+  background-image: url(./images/red-dead.png);
+  background-size: contain;
+  background-position: center;
+}
+
+#destroyed-red {
+  background-image: url(./images/red-ghost.png);
+  background-size: contain;
+  background-position: center;
 }
 
 #pink {
-  background-color: #ff65e5;
+  background-image: url(./images/pink-char.png);
+  background-size: contain;
+  background-position: center;
+}
+
+#hit-pink {
+  background-image: url(./images/pink-dead.png);
+  background-size: contain;
+  background-position: center;
+}
+
+#destroyed-pink {
+  background-image: url(./images/pink-ghost.png);
+  background-size: contain;
+  background-position: center;
 }
 
 #black {
-  background-color: #464646;
+  background-image: url(./images/black-char.png);
+  background-size: contain;
+  background-position: center;
+}
+
+#hit-black {
+  background-image: url(./images/black-dead.png);
+  background-size: contain;
+  background-position: center;
+}
+
+#destroyed-black {
+  background-image: url(./images/black-ghost.png);
+  background-size: contain;
+  background-position: center;
 }
 
 #brown {
-  background-color: #79411c;
+  background-image: url(./images/brown-char.png);
+  background-size: contain;
+  background-position: center;
+}
+
+#hit-brown {
+  background-image: url(./images/brown-dead.png);
+  background-size: contain;
+  background-position: center;
+}
+
+#destroyed-brown {
+  background-image: url(./images/brown-ghost.png);
+  background-size: contain;
+  background-position: center;
 }
 
 #blue {
-  background-color: #0000ff;
+  background-image: url(./images/blue-char.png);
+  background-size: contain;
+  background-position: center;
+}
+
+#hit-blue {
+  background-image: url(./images/blue-dead.png);
+  background-size: contain;
+  background-position: center;
+}
+
+#destroyed-blue {
+  background-image: url(./images/blue-ghost.png);
+  background-size: contain;
+  background-position: center;
 }
 
 #orange {
-  background-color: #ffa500;
+  background-image: url(./images/orange-char.png);
+  background-size: contain;
+  background-position: center;
+}
+
+#hit-orange {
+  background-image: url(./images/orange-dead.png);
+  background-size: contain;
+  background-position: center;
+}
+
+#destroyed-orange {
+  background-image: url(./images/orange-ghost.png);
+  background-size: contain;
+  background-position: center;
 }
 
 #cyan {
-  background-color: #00ffff;
+  background-image: url(./images/cyan-char.png);
+  background-size: contain;
+  background-position: center;
+}
+
+#hit-cyan {
+  background-image: url(./images/cyan-dead.png);
+  background-size: contain;
+  background-position: center;
+}
+
+#destroyed-cyan {
+  background-image: url(./images/cyan-ghost.png);
+  background-size: contain;
+  background-position: center;
 }
 
 #green {
-  background-color: #00b300;
+  background-image: url(./images/green-char.png);
+  background-size: contain;
+  background-position: center;
+}
+
+#hit-green {
+  background-image: url(./images/green-dead.png);
+  background-size: contain;
+  background-position: center;
+}
+
+#destroyed-green {
+  background-image: url(./images/green-ghost.png);
+  background-size: contain;
+  background-position: center;
 }
 
 #color-hide {
-  background-color: #c0bfbf;
+  background-color: none;
   border: none;
 }
 
 .orientation {
   display: none;
   flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.horizontal,
+.vertical {
+  width: 200px;
+  height: 75px;
+  border: 3px solid white;
+  border-radius: 10px;
+  background-color: black;
+  color: white;
+  font-family: AmongUs2;
+  font-size: 30px;
+  box-shadow: 0 5px 0 #dbdbdb;
+  margin-top: 30px;
 }
 
 .start-game {
   display: none;
+  width: 200px;
+  height: 75px;
+  border: 3px solid white;
+  border-radius: 10px;
+  background-color: black;
+  color: white;
+  font-family: AmongUs2;
+  font-size: 30px;
+  box-shadow: 0 5px 0 #dbdbdb;
 }
 
 .cell {
-  height: 10%;
-  width: 10%;
-  border: 1px solid black;
+  height: 12.5%;
+  width: 12.5%;
+  border: 1px solid rgb(146, 146, 146);
+  border-radius: 7px;
+  font-size: 0px;
 }
 
 .void {
   border: none;
-  background-color: #9e9e9e;
+  background: none;
+  height: 0px;
+  width: 0px;
 }
 
 .place-ship {
@@ -119,19 +311,31 @@ body {
 
 .grids {
   display: none;
+  flex-direction: column;
+  height: 100vh;
+  justify-content: space-evenly;
+  align-items: center;
 }
 
 .player-grid,
 .comp-grid {
-  height: 600px;
-  width: 600px;
+  height: 650px;
+  width: 650px;
   display: none;
   flex-direction: row;
   flex-wrap: wrap;
 }
 
-.show {
-  display: flex;
+.p-turn {
+  display: none;
+}
+
+.c-turn {
+  display: none;
+}
+
+.choose-position {
+  display: none;
 }
 
 .column {
@@ -139,24 +343,75 @@ body {
 }
 
 .comp-grid {
-  background-color: #a3b8f1;
-}
-
-#hit {
-  background-color: #000000;
+  background-color: none;
 }
 
 #miss {
-  background-color: #ffffff;
+  background-image: url(./images/gun.png);
+  background-size: cover;
 }
 
-#destroyed {
-  background-color: salmon;
-}
 
-/* ********** COMPUTER ********** */
 
-.computer {
+/* ********** WIN SCREEN ********** */
+
+.winner {
   display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 3s linear;
 }
+
+.victory,
+.defeat {
+  color: #4f4fff;
+  font-family: AmongUs2;
+  display: flex;
+  margin-bottom: 100px;
+  font-size: 100px;
+}
+
+.winner img {
+  display: flex;
+  width: 100vw;
+  height: auto;
+}
+
+.play-again {
+  height: 162px;
+  width: 110px;
+  background-image: url(./images/play-again.png);
+  background-size: contain;
+  background-color: black;
+  border: none;
+}
+
+.loser {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 3s linear;
+}
+
+.defeat {
+  color: red;
+}
+
+.show {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+
 

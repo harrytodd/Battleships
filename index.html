@@ -10,6 +10,13 @@
 </head>
 
 <body>
+  <audio id="start-game" src="./audio/start.wav"></audio>
+  <audio id="destroyed-ship" src="./audio/destroyed.wav"></audio>
+  <audio id="hit-ship" src="./audio/hit.wav"></audio>
+  <audio id="lose-game" src="./audio/lose-game.wav"></audio>
+  <audio id="miss-ship" src="./audio/miss.wav"></audio>
+  <audio id="win-game" src="./audio/win-game.wav"></audio>
+  <audio id="ambience" src="./audio/ambience.wav"></audio>
   <section class="player">
     <div class="length">
       <h1>Choose a length:</h1>
@@ -20,7 +27,10 @@
     </div>
 
     <div class="color">
-      <h1>Choose a colour:</h1>
+      <div class="color-h1">
+        <h1>Choose a colour:</h1>
+      </div>
+      <div class="color-buttons">
       <button class="color-butt" id="red"></button>
       <button class="color-butt" id="pink"></button>
       <button class="color-butt" id="black"></button>
@@ -29,6 +39,7 @@
       <button class="color-butt" id="orange"></button>
       <button class="color-butt" id="cyan"></button>
       <button class="color-butt" id="green"></button>
+      </div>
     </div>
 
     <div class="orientation">
@@ -37,27 +48,33 @@
       <button class="vertical">Vertical</button>
     </div>
 
-    <div class="place-ship">
-      <button class="confirm">Confirm</button>
-    </div>
-
     <div class="start-game">
       <button class="start-butt">START GAME</button>
     </div>
   </section>
 
   <section class="grids">
+    <h1 class="p-turn">Your Turn</h1>
+    <h1 class="c-turn">Computer's Turn</h1>
+    <h1 class="choose-position">Select a position</h1>
     <div class="player-grid">
 
     </div>
-
     <div class="comp-grid">
 
     </div>
   </section>
 
-  <section class="computer">
+  <section class="winner">
+    <h1 class="victory">Victory</h1>
+    <img src="./images/winner.png" alt="">
+    <button class="play-again"></button>
+  </section>
 
+  <section class="loser">
+    <h1 class="defeat">Defeat</h1>
+    <img src="./images/defeat.png" alt="">
+    <button class="play-again"></button>
   </section>
 
   <script src="app.js"></script>

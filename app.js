@@ -13,19 +13,30 @@ const playableCompCells = []
 //* Button Logic
 const lengthButtonsArr = Array.from(document.querySelectorAll('.length-butt'))
 const colorButtonsArr = Array.from(document.querySelectorAll('.color-butt'))
-const confirmPlaceButt = document.querySelector('.confirm')
 const startGameButt = document.querySelector('.start-butt')
 const lengthDiv = document.querySelector('.length')
 const colorDiv = document.querySelector('.color')
 const orientationDiv = document.querySelector('.orientation')
-const placeShipDiv = document.querySelector('.place-ship')
 const startGameDiv = document.querySelector('.start-game')
 const body = document.body
+const playersTurn = document.querySelector('.p-turn')
+const computersTurn = document.querySelector('.c-turn')
+const choosePosition = document.querySelector('.choose-position')
+const playAgain = Array.from(document.querySelectorAll('.play-again'))
 //* Ship Placement 
 const horizontalButt = document.querySelector('.horizontal')
 const verticalButt = document.querySelector('.vertical')
 //* Sections
 const buttonSection = document.querySelector('.player')
+const winnerSection = document.querySelector('.winner')
+const loserSection = document.querySelector('.loser')
+//* Audio
+const startAudio = document.querySelector('#start-game')
+const destroyedAudio = document.querySelector('#destroyed-ship')
+const hitAudio = document.querySelector('#hit-ship')
+const loseAudio = document.querySelector('#lose-game')
+const missAudio = document.querySelector('#miss-ship')
+const winAudio = document.querySelector('#win-game')
 
 function init() {
   playerGridGen()
@@ -36,10 +47,8 @@ function init() {
   gridSection.classList.remove('show')
   colorDiv.classList.remove('show')
   orientationDiv.classList.remove('show')
-  placeShipDiv.classList.remove('show')
   startGameDiv.classList.remove('show')
   compGrid.classList.remove('show')
-  console.log(horizontalButt)
 }
 init()
 
@@ -97,13 +106,14 @@ function compGridGen() {
 class playerShips {
   constructor(length, color, orientation) {
     this.length = length,
-      this.color = color,
-      this.orientation = orientation,
-      this.position
+    this.color = color,
+    this.orientation = orientation,
+    this.position
     this.hitPositions = []
   }
   shipDestroyed() {
     if (this.hitPositions.length === this.length) {
+      destroyedAudio.play()
       lastTurn = null
       lastTurnCell = null
       lastHit = null
@@ -117,7 +127,7 @@ class playerShips {
       nextTurnCell = 0 // HTML cell
       nextTurnInd = null
       destroyedPlayerArr.push(this.length)
-      return this.position.forEach((el) => allPlayerCells[el].id = 'destroyed')
+      return this.position.forEach((el) => allPlayerCells[el].id = 'destroyed-' + this.color)
     } else {
       return false
     }
@@ -133,9 +143,9 @@ let colorArr = ['red', 'pink', 'black', 'brown', 'blue', 'orange', 'cyan', 'gree
 class compShips {
   constructor(length) {
     this.length = length,
-      this.color = this.randomColor(),
-      this.orientation = this.randomOrientation(),
-      this.position = this.randomPosition()
+    this.color = this.randomColor(),
+    this.orientation = this.randomOrientation(),
+    this.position = this.randomPosition()
     this.hitPositions = []
   }
   randomColor() {
@@ -239,8 +249,9 @@ class compShips {
   }
   shipDestroyed() {
     if (this.hitPositions.length === this.length) {
+      destroyedAudio.play()
       destroyedCompArr.push(this.length)
-      return this.position.forEach((el) => playableCompCells[el].id = 'destroyed')
+      return this.position.forEach((el) => playableCompCells[el].id = 'destroyed-' + this.color)
     } else {
       return false
     }
@@ -287,45 +298,41 @@ colorButtonsArr.forEach((el) => {
   }
 })
 
-confirmPlaceButt.addEventListener('click', () => {
-  placeShipDiv.classList.remove('show')
-  let allTrue = 0
-  lengthButtonsArr.forEach((el) => el.classList.contains('selected') ? allTrue++ : true)
-  if (allTrue === 4) {
-    startGameDiv.classList.add('show')
-  } else {
-    lengthDiv.classList.add('show')
-  }
-})
-
 startGameButt.addEventListener('click', () => {
   startGame()
   buttonSection.classList.remove('show')
 })
+
+playAgain.forEach((el) => {
+  el.addEventListener('click', () => {
+    window.location.reload()
+  })
+})
+
 
 
 //* ********** PLAYER SHIP PLACEMENT **********
 horizontalButt.addEventListener('click', () => {
   currShip.orientation = 'horizontal'
   orientationDiv.classList.remove('show')
-  placeShipDiv.classList.add('show')
   gridSection.classList.add('show')
   body.classList.add('column')
+  choosePosition.classList.add('show')
 })
 
 verticalButt.addEventListener('click', () => {
   currShip.orientation = 'vertical'
   orientationDiv.classList.remove('show')
-  placeShipDiv.classList.add('show')
   gridSection.classList.add('show')
   body.classList.add('column')
+  choosePosition.classList.add('show')
 })
 
 
 playablePlayerCells.forEach((el) => {
   el.addEventListener('click', addShip)
   function addShip() {
-    currShip.position = Number(el.id)
+    // currShip.position = Number(el.id)
     const elId = Number(el.id)
     if (currShip.orientation === 'horizontal') {
       let num = Number(el.id) + currShip.length
@@ -378,7 +385,6 @@ playablePlayerCells.forEach((el) => {
             playablePlayerCells[i].classList.add('occupied')
             playablePlayerCells[i].classList.add(`ship${currShip.length}`)
           }
-
           currShip.position = []
 
           for (let i = elId; i < (elId + (currShip.length * playerWidth)); i += playerWidth) {
@@ -391,16 +397,15 @@ playablePlayerCells.forEach((el) => {
       }
     }
     setTimeout(() => {
+      choosePosition.classList.remove('show')
       let allTrue = 0
       lengthButtonsArr.forEach((el) => el.classList.contains('selected') ? allTrue++ : true)
       if (allTrue === 4) {
         startGameDiv.classList.add('show')
-        placeShipDiv.classList.remove('show')
         gridSection.classList.remove('show')
         body.classList.remove('column')
       } else {
         lengthDiv.classList.add('show')
-        placeShipDiv.classList.remove('show')
         gridSection.classList.remove('show')
         body.classList.remove('column')
       }
@@ -427,19 +432,25 @@ const compShip4 = new compShips(4)
 //* ********** START GAME **********
 
 function startGame() {
+  gridSection.classList.add('show')
   const players = ['player', 'computer']
   const whoStarts = players[Math.floor(Math.random() * players.length)]
+  startAudio.play()
   if (whoStarts === 'player') {
     playerTurn()
   } else {
-    compTurn()
+    setTimeout(() => {
+      compTurn()
+      computersTurn.classList.add('show')
+    }, 3000)
   }
-
 }
 
 function playerTurn() {
   playerGrid.classList.remove('show')
   compGrid.classList.add('show')
+  playersTurn.classList.add('show')
+  computersTurn.classList.remove('show')
 }
 
 playableCompCells.forEach((el) => {
@@ -449,29 +460,40 @@ playableCompCells.forEach((el) => {
       if (el.classList.contains('ship1')) {
         compShip1.hitPositions.push(el.innerHTML)
         if (compShip1.shipDestroyed() === false) {
-          el.id = 'hit'
+          el.id = 'hit-' + compShip1.color
+          hitAudio.play()
         }
       } else if (el.classList.contains('ship2')) {
         compShip2.hitPositions.push(el.innerHTML)
         if (compShip2.shipDestroyed() === false) {
-          el.id = 'hit'
+          el.id = 'hit-' + compShip2.color
+          hitAudio.play()
         }
       } else if (el.classList.contains('ship3')) {
         compShip3.hitPositions.push(el.innerHTML)
         if (compShip3.shipDestroyed() === false) {
-          el.id = 'hit'
+          el.id = 'hit-' + compShip3.color
+          hitAudio.play()
         }
       } else if (el.classList.contains('ship4')) {
         compShip4.hitPositions.push(el.innerHTML)
         if (compShip4.shipDestroyed() === false) {
-          el.id = 'hit'
+          el.id = 'hit-' + compShip4.color
+          hitAudio.play()
         }
       }
     } else {
       el.id = 'miss'
+      missAudio.play()
     }
     if (destroyedCompArr.length === 4) {
-      console.log('YOU WIN')
+      setTimeout(() => {
+        winAudio.play()
+        gridSection.classList.remove('show')
+        winnerSection.classList.add('show')
+        body.classList.add('no-image')
+      }, 1000)
+      
     } else {
       setTimeout(() => {
         compTurn()
@@ -497,9 +519,11 @@ let nextTurnInd = null
 function compTurn() {
   compGrid.classList.remove('show')
   playerGrid.classList.add('show')
+  playersTurn.classList.remove('show')
+  computersTurn.classList.add('show')
+
 
   setTimeout(() => {
-
     console.log(nextTurns)
     if (lastTurnCell === null || (lastTurn === 'miss' && firstHitCell === null)) {
       const randomNum = Math.floor(Math.random() * playablePlayerCells.length)
@@ -548,11 +572,16 @@ function compTurn() {
     }
 
     if (destroyedPlayerArr.length === 4) {
-      console.log('YOU LOSE')
+      setTimeout(() => {
+        loseAudio.play()
+        gridSection.classList.remove('show')
+        loserSection.classList.add('show')
+        body.classList.add('no-image')
+      }, 1000)
     } else {
       nextPlayer()
     }
-  }, 1000)
+  }, 1500)
 }
 function nextPlayer() {
   setTimeout(() => {
@@ -568,7 +597,8 @@ function checkNextCell() {
   if (nextTurnCell.classList.contains('ship1')) {
     ship1.hitPositions.push(nextTurnCell.innerHTML)
     if (ship1.shipDestroyed() === false) {
-      nextTurnCell.id = 'hit'
+      hitAudio.play()
+      nextTurnCell.id = 'hit-' + ship1.color
       lastTurn = 'hit'
       lastHit = Number(nextTurnCell.innerHTML)
       lastHitCell = nextTurnCell
@@ -576,7 +606,8 @@ function checkNextCell() {
   } else if (nextTurnCell.classList.contains('ship2')) {
     ship2.hitPositions.push(nextTurnCell.innerHTML)
     if (ship2.shipDestroyed() === false) {
-      nextTurnCell.id = 'hit'
+      hitAudio.play()
+      nextTurnCell.id = 'hit-' + ship2.color
       lastTurn = 'hit'
       lastHit = Number(nextTurnCell.innerHTML)
       lastHitCell = nextTurnCell
@@ -584,7 +615,8 @@ function checkNextCell() {
   } else if (nextTurnCell.classList.contains('ship3')) {
     ship3.hitPositions.push(nextTurnCell.innerHTML)
     if (ship3.shipDestroyed() === false) {
-      nextTurnCell.id = 'hit'
+      hitAudio.play()
+      nextTurnCell.id = 'hit-' + ship3.color
       lastTurn = 'hit'
       lastHit = Number(nextTurnCell.innerHTML)
       lastHitCell = nextTurnCell
@@ -592,12 +624,14 @@ function checkNextCell() {
   } else if (nextTurnCell.classList.contains('ship4')) {
     ship4.hitPositions.push(nextTurnCell.innerHTML)
     if (ship4.shipDestroyed() === false) {
-      nextTurnCell.id = 'hit'
+      hitAudio.play()
+      nextTurnCell.id = 'hit-' + ship4.color
       lastTurn = 'hit'
       lastHit = Number(nextTurnCell.innerHTML)
       lastHitCell = nextTurnCell
     }
   } else {
+    missAudio.play()
     nextTurnCell.id = 'miss'
     lastTurn = 'miss'
   }
