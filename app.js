@@ -698,49 +698,53 @@ function nextToFirstHitCell() {
       if (playablePlayerCellsIDs.includes(firstHitCellID - playerWidth)) {
         return
       } else {
-        let upCellInd = playablePlayerCellsIDs.indexOf(firstHitCellID - playerWidth)
-        let upCell = playablePlayerCells[upCellInd]
-        if (upCell.id === 'hit-' + lastHitShip.color) {
-          arr[ind] = 'upCellHit'
-        } else {
-          arr[ind] = 'thisCellHasBeenTaken'
-        }
+        // let upCellInd = playablePlayerCellsIDs.indexOf(firstHitCellID - playerWidth)
+        // let upCell = playablePlayerCells[upCellInd]
+        // if (upCell.id === 'hit-' + lastHitShip.color) {
+        //   arr[ind] = 'upCellHit'
+        // } else {
+          
+        // }
+        arr[ind] = 'thisCellHasBeenTaken'
       }
     } else if (el === 'right') {
       if (playablePlayerCellsIDs.includes(firstHitCellID + 1)) {
         return
       } else {
-        let rightCellInd = allPlayerCellsIDs.indexOf(firstHitCellID + 1)
-        let rightCell = allPlayerCells[rightCellInd]
-        if (rightCell.id === 'hit-' + lastHitShip.color) {
-          arr[ind] = 'rightCellHit'
-        } else {
-          arr[ind] = 'thisCellHasBeenTaken'
-        }
+        // let rightCellInd = allPlayerCellsIDs.indexOf(firstHitCellID + 1)
+        // let rightCell = allPlayerCells[rightCellInd]
+        // if (rightCell.id === 'hit-' + lastHitShip.color) {
+        //   arr[ind] = 'rightCellHit'
+        // } else {
+          
+        // }
+        arr[ind] = 'thisCellHasBeenTaken'
       }
     } else if (el === 'down') {
       if (playablePlayerCellsIDs.includes(firstHitCellID + playerWidth)) {
         return
       } else {
-        let downCellInd = allPlayerCellsIDs.indexOf(firstHitCellID + playerWidth)
-        let downCell = allPlayerCells[downCellInd]
-        if (downCell.id === 'hit-' + lastHitShip.color) {
-          arr[ind] = 'downCellHit'
-        } else {
-          arr[ind] = 'thisCellHasBeenTaken'
-        }
+        // let downCellInd = allPlayerCellsIDs.indexOf(firstHitCellID + playerWidth)
+        // let downCell = allPlayerCells[downCellInd]
+        // if (downCell.id === 'hit-' + lastHitShip.color) {
+        //   arr[ind] = 'downCellHit'
+        // } else {
+          
+        // }
+        arr[ind] = 'thisCellHasBeenTaken'
       }
     } else if (el === 'left') {
       if (playablePlayerCellsIDs.includes(firstHitCellID - 1)) {
         return
       } else {
-        let leftCellInd = playablePlayerCellsIDs.indexOf(firstHitCellID - 1)
-        let leftCell = playablePlayerCells[leftCellInd]
-        if (leftCell.id === 'hit-' + lastHitShip.color) {
-          arr[ind] = 'leftCellHit'
-        } else {
-          arr[ind] = 'thisCellHasBeenTaken'
-        }
+        // let leftCellInd = playablePlayerCellsIDs.indexOf(firstHitCellID - 1)
+        // let leftCell = playablePlayerCells[leftCellInd]
+        // if (leftCell.id === 'hit-' + lastHitShip.color) {
+        //   arr[ind] = 'leftCellHit'
+        // } else {
+          
+        // }
+        arr[ind] = 'thisCellHasBeenTaken'
       }
     }
   })
