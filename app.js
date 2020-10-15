@@ -8,6 +8,7 @@ const playerCells = []
 const playablePlayerCells = []
 const playablePlayerCellsIDs = []
 const allPlayerCells = []
+const allPlayerCellsIDs = []
 const compCells = []
 const playableCompCells = []
 //* Button Logic
@@ -26,6 +27,7 @@ const playAgain = Array.from(document.querySelectorAll('.play-again'))
 //* Ship Placement 
 const horizontalButt = document.querySelector('.horizontal')
 const verticalButt = document.querySelector('.vertical')
+const clickBlock = document.querySelector('.click-block')
 //* Sections
 const buttonSection = document.querySelector('.player')
 const winnerSection = document.querySelector('.winner')
@@ -73,6 +75,7 @@ function playerGridGen() {
       currNum++
       playablePlayerCells.push(div)
       allPlayerCells.push(div)
+      allPlayerCellsIDs.push(Number(div.id))
       playablePlayerCellsIDs.push(Number(div.id))
     }
     playerCells.push(div)
@@ -106,11 +109,12 @@ function compGridGen() {
 //* ********** CLASSES **********
 
 class playerShips {
-  constructor(length, color, orientation) {
-    this.length = length,
-    this.color = color,
-    this.orientation = orientation,
-    this.position
+  constructor(name, length, color, orientation) {
+    this.name = name,
+      this.length = length,
+      this.color = color,
+      this.orientation = orientation,
+      this.position
     this.hitPositions = []
   }
   shipDestroyed() {
@@ -135,19 +139,19 @@ class playerShips {
     }
   }
 }
-const ship1 = new playerShips()
-const ship2 = new playerShips()
-const ship3 = new playerShips()
-const ship4 = new playerShips()
+const ship1 = new playerShips('ship1')
+const ship2 = new playerShips('ship2')
+const ship3 = new playerShips('ship3')
+const ship4 = new playerShips('ship4')
 const destroyedPlayerArr = []
 
 let colorArr = ['red', 'pink', 'black', 'brown', 'blue', 'orange', 'cyan', 'green']
 class compShips {
   constructor(length) {
     this.length = length,
-    this.color = this.randomColor(),
-    this.orientation = this.randomOrientation(),
-    this.position = this.randomPosition()
+      this.color = this.randomColor(),
+      this.orientation = this.randomOrientation(),
+      this.position = this.randomPosition()
     this.hitPositions = []
   }
   randomColor() {
@@ -172,7 +176,6 @@ class compShips {
       while (notPlacedHor) {
         let randomCellHor = this.randomCell()
         let num = randomCellHor + this.length
-        // console.log(`${this.length} is trying cell ${randomCellHor}`)
         if ((randomCellHor % playerWidth <= playerWidth - this.length)) {
           let clearSpace = 0
           for (let i = randomCellHor; i < num; i++) {
@@ -184,27 +187,26 @@ class compShips {
           }
 
           if (clearSpace !== this.length) {
-            return
+            randomCellHor = this.randomCell()
           } else {
             for (let i = randomCellHor; i < num; i++) {
               // playableCompCells[i].id = this.color //! USE THIS FOR DEBUGGING COMPUTER GRID
               playableCompCells[i].classList.add('occupied')
               playableCompCells[i].classList.add(`ship${this.length}`)
             }
-            notPlacedHor = false
 
             for (let i = randomCellHor; i < (randomCellHor + this.length); i++) {
               positionArr.push(i)
             }
+            notPlacedHor = false
           }
         } else {
-          // console.log(`${this.length} is rolling again, failed cell: ${randomCellHor}`)
           randomCellHor = this.randomCell()
         }
       }
 
       return this.position = positionArr
-      // console.log(this.position)
+
 
     } else if (this.orientation === 'vertical') {
       let notPlacedVirt = true
@@ -212,7 +214,6 @@ class compShips {
       while (notPlacedVirt) {
         let randomCellVirt = this.randomCell()
         let num = randomCellVirt + ((playerWidth * (this.length - 1)))
-        // console.log(`${this.length} is trying cell ${randomCellVirt}`)
 
         if (randomCellVirt < (playerWidth ** 2) - (playerWidth * (this.length - 1))) {
           let clearSpace = 0
@@ -225,28 +226,24 @@ class compShips {
           }
 
           if (clearSpace !== this.length) {
-            return
+            randomCellVirt = this.randomCell()
           } else {
             for (let i = randomCellVirt; i <= num; i += playerWidth) {
               // playableCompCells[i].id = this.color //! USE THIS FOR DEBUGGING COMPUTER GRID
               playableCompCells[i].classList.add('occupied')
               playableCompCells[i].classList.add(`ship${this.length}`)
             }
-            notPlacedVirt = false
-            this.position = []
 
             for (let i = randomCellVirt; i < (randomCellVirt + (this.length * playerWidth)); i += playerWidth) {
               positionArr.push(i)
             }
-            // console.log(this.position)
+            notPlacedVirt = false
           }
         } else {
-          // console.log(`${this.length} is rolling again, failed cell: ${randomCellVirt}`)
           randomCellVirt = this.randomCell()
         }
       }
       return this.position = positionArr
-      // console.log(this.position)
     }
   }
   shipDestroyed() {
@@ -317,6 +314,7 @@ playAgain.forEach((el) => {
 horizontalButt.addEventListener('click', () => {
   currShip.orientation = 'horizontal'
   orientationDiv.classList.remove('show')
+  clickBlock.classList.remove('show-block')
   gridSection.classList.add('show')
   body.classList.add('column')
   choosePosition.classList.add('show')
@@ -325,6 +323,7 @@ horizontalButt.addEventListener('click', () => {
 verticalButt.addEventListener('click', () => {
   currShip.orientation = 'vertical'
   orientationDiv.classList.remove('show')
+  clickBlock.classList.remove('show-block')
   gridSection.classList.add('show')
   body.classList.add('column')
   choosePosition.classList.add('show')
@@ -351,6 +350,8 @@ playablePlayerCells.forEach((el) => {
         if (clearSpace !== currShip.length) {
           return
         } else {
+          clickBlock.classList.add('show-block')
+
           for (let i = Number(el.id); i < num; i++) {
             playablePlayerCells[i].id = currShip.color
             playablePlayerCells[i].classList.add('occupied')
@@ -361,7 +362,6 @@ playablePlayerCells.forEach((el) => {
           for (let i = elId; i < (elId + currShip.length); i++) {
             currShip.position.push(i)
           }
-          // console.log(currShip.position)
         }
 
       } else {
@@ -382,6 +382,7 @@ playablePlayerCells.forEach((el) => {
         if (clearSpace !== currShip.length) {
           return
         } else {
+          clickBlock.classList.add('show-block')
           for (let i = Number(el.id); i <= num; i += playerWidth) {
             playablePlayerCells[i].id = currShip.color
             playablePlayerCells[i].classList.add('occupied')
@@ -392,12 +393,12 @@ playablePlayerCells.forEach((el) => {
           for (let i = elId; i < (elId + (currShip.length * playerWidth)); i += playerWidth) {
             currShip.position.push(i)
           }
-          // console.log(currShip.position)
         }
       } else {
         return
       }
     }
+
     setTimeout(() => {
       choosePosition.classList.remove('show')
       let allTrue = 0
@@ -419,17 +420,10 @@ playablePlayerCells.forEach((el) => {
 
 //* ********** COMPUTER SHIP GENERATION **********
 
-
 const compShip1 = new compShips(1)
 const compShip2 = new compShips(2)
 const compShip3 = new compShips(3)
 const compShip4 = new compShips(4)
-// console.log(compShip1)
-// console.log(compShip2)
-// console.log(compShip3)
-// console.log(compShip4) //! COMPUTER GRID DEBUGGING
-
-
 
 //* ********** START GAME **********
 
@@ -441,14 +435,15 @@ function startGame() {
   if (whoStarts === 'player') {
     playerTurn()
   } else {
+    computersTurn.classList.add('show')
     setTimeout(() => {
       compTurn()
-      computersTurn.classList.add('show')
     }, 3000)
   }
 }
 
 function playerTurn() {
+  clickBlock.classList.remove('show-block')
   playerGrid.classList.remove('show')
   compGrid.classList.add('show')
   playersTurn.classList.add('show')
@@ -494,19 +489,22 @@ playableCompCells.forEach((el) => {
         gridSection.classList.remove('show')
         winnerSection.classList.add('show')
         body.classList.add('no-image')
-      }, 1000)
-      
+      }, 2000)
+
     } else {
       setTimeout(() => {
         compTurn()
-      }, 1000)
+
+      }, 2000)
     }
     el.removeEventListener('click', checkIfCompHit)
+    clickBlock.classList.add('show-block')
   }
 })
 
 let lastTurn = null
 let lastTurnCell = null
+let lastTurnCellID = null
 let lastHit = null
 let lastHitCell = null
 let firstHitCell = null
@@ -517,16 +515,16 @@ let firstHitTurnsFilt = []
 let nextTurns = null
 let nextTurnCell = 0 // HTML cell
 let nextTurnInd = null
+let lastHitShip = null
 
 function compTurn() {
+  computersTurn.classList.add('show')
   compGrid.classList.remove('show')
   playerGrid.classList.add('show')
-  playersTurn.classList.remove('show')
   computersTurn.classList.add('show')
-
+  playersTurn.classList.remove('show')
 
   setTimeout(() => {
-    console.log(nextTurns)
     if (lastTurnCell === null || (lastTurn === 'miss' && firstHitCell === null)) {
       const randomNum = Math.floor(Math.random() * playablePlayerCells.length)
       nextTurnInd = randomNum
@@ -539,36 +537,66 @@ function compTurn() {
       nextToFirstHitCell()
     } else if (lastTurn === 'miss' && firstHitCell !== null) {
       if (lastHitCell === firstHitCell) {
-        console.log('last cell is first cell ' + firstHitTurnsFilt)
         firstHitTurnsFilt.splice(randomFirstHitTurn, 1)
-        console.log('after splice ' + firstHitTurnsFilt)
         randomFirstHitTurn = Math.floor(Math.random() * firstHitTurnsFilt.length)
-        console.log(firstHitTurnsFilt[randomFirstHitTurn])
 
         if (firstHitTurnsFilt[randomFirstHitTurn] === 'up') {
           nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID - playerWidth)
           nextTurns = 'up'
-          console.log('up')
         } else if (firstHitTurnsFilt[randomFirstHitTurn] === 'right') {
           nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID + 1)
           nextTurns = 'right'
-          console.log('right')
         } else if (firstHitTurnsFilt[randomFirstHitTurn] === 'down') {
           nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID + playerWidth)
           nextTurns = 'down'
-          console.log('down')
         } else if (firstHitTurnsFilt[randomFirstHitTurn] === 'left') {
           nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID - 1)
           nextTurns = 'left'
-          console.log('left')
         }
 
         nextTurnCell = playablePlayerCells[nextTurnInd]
-        console.log(nextTurnCell.innerHTML)
         checkNextCell()
       } else {
         keepGoingThatDirection()
       }
+    } else if (lastTurn === 'hit' && lastTurnCell !== firstHitCell &&
+      ((lastTurnCellID === 0) || // 0
+        (lastTurnCellID === playerWidth - 1) || // 7
+        (lastTurnCellID === (playerWidth ** 2) - 1) || // 63
+        (lastTurnCellID === (playerWidth ** 2) - playerWidth) || // 56
+        (lastTurnCellID % playerWidth === 0 && lastTurnCellID !== 0 && lastTurnCellID !== (playerWidth ** 2) - playerWidth) || // down left side
+        (lastTurnCellID > (playerWidth ** 2) - playerWidth && lastTurnCellID < playerWidth ** 2) || // bottom row
+        (lastTurnCellID % playerWidth === playerWidth - 1 && lastTurnCellID !== (playerWidth ** 2) - 1 && lastTurnCellID !== playerWidth - 1) || // down right side
+        (lastTurnCellID > 0 && lastTurnCellID < playerWidth - 1))) { // top row
+
+      if ((firstHitCellID === 0) || // 0
+        (firstHitCellID === playerWidth - 1) || // 7
+        (firstHitCellID === (playerWidth ** 2) - 1) || // 63
+        (firstHitCellID === (playerWidth ** 2) - playerWidth) || // 56
+        (firstHitCellID % playerWidth === 0 && firstHitCellID !== 0 && firstHitCellID !== (playerWidth ** 2) - playerWidth) || // down left side
+        (firstHitCellID > (playerWidth ** 2) - playerWidth && firstHitCellID < playerWidth ** 2) || // bottom row
+        (firstHitCellID % playerWidth === playerWidth - 1 && firstHitCellID !== (playerWidth ** 2) - 1 && firstHitCellID !== playerWidth - 1) || // down right side
+        (firstHitCellID > 0 && firstHitCellID < playerWidth - 1)) {
+        keepGoingThatDirection()
+      } else {
+        if (nextTurns === 'up') {
+          nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID + playerWidth)
+          nextTurns = 'down'
+        } else if (nextTurns === 'right') {
+          nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID - 1)
+          nextTurns = 'left'
+        } else if (nextTurns === 'down') {
+          nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID - playerWidth)
+          nextTurns = 'up'
+        } else if (nextTurns === 'left') {
+          nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID + 1)
+          nextTurns = 'right'
+        }
+
+        nextTurnCell = playablePlayerCells[nextTurnInd]
+        checkNextCell()
+      }
+
     } else if (lastTurn === 'hit' && lastTurnCell !== firstHitCell) {
       keepGoingThatDirection()
     }
@@ -579,7 +607,7 @@ function compTurn() {
         gridSection.classList.remove('show')
         loserSection.classList.add('show')
         body.classList.add('no-image')
-      }, 1000)
+      }, 2000)
     } else {
       nextPlayer()
     }
@@ -593,10 +621,11 @@ function nextPlayer() {
 
 function checkNextCell() {
   lastTurnCell = nextTurnCell
+  lastTurnCellID = Number(nextTurnCell.innerHTML)
   playablePlayerCells.splice(nextTurnInd, 1)
   playablePlayerCellsIDs.splice(nextTurnInd, 1)
-  // console.log('lastTurnCell: ' + lastTurnCell.innerHTML + ' ===== nextTurnCell: ' + nextTurnCell.innerHTML)
   if (nextTurnCell.classList.contains('ship1')) {
+    lastHitShip = ship1
     ship1.hitPositions.push(nextTurnCell.innerHTML)
     if (ship1.shipDestroyed() === false) {
       hitAudio.play()
@@ -606,6 +635,7 @@ function checkNextCell() {
       lastHitCell = nextTurnCell
     }
   } else if (nextTurnCell.classList.contains('ship2')) {
+    lastHitShip = ship2
     ship2.hitPositions.push(nextTurnCell.innerHTML)
     if (ship2.shipDestroyed() === false) {
       hitAudio.play()
@@ -615,6 +645,7 @@ function checkNextCell() {
       lastHitCell = nextTurnCell
     }
   } else if (nextTurnCell.classList.contains('ship3')) {
+    lastHitShip = ship3
     ship3.hitPositions.push(nextTurnCell.innerHTML)
     if (ship3.shipDestroyed() === false) {
       hitAudio.play()
@@ -624,6 +655,7 @@ function checkNextCell() {
       lastHitCell = nextTurnCell
     }
   } else if (nextTurnCell.classList.contains('ship4')) {
+    lastHitShip = ship4
     ship4.hitPositions.push(nextTurnCell.innerHTML)
     if (ship4.shipDestroyed() === false) {
       hitAudio.play()
@@ -643,70 +675,79 @@ function nextToFirstHitCell() {
 
   if (firstHitCellID === 0) { // 0
     firstHitTurns.push('right', 'down')
-    console.log('0')
   } else if (firstHitCellID % playerWidth === 0 && firstHitCellID !== 0 && firstHitCellID !== (playerWidth ** 2) - playerWidth) { // down left side
     firstHitTurns.push('up', 'right', 'down')
-    console.log('down left side')
   } else if (firstHitCellID === (playerWidth ** 2) - playerWidth) { // 56
     firstHitTurns.push('up', 'right')
-    console.log('56')
   } else if (firstHitCellID > (playerWidth ** 2) - playerWidth && firstHitCellID < playerWidth ** 2) { // bottom row
     firstHitTurns.push('up', 'right', 'left')
-    console.log('bottom row')
   } else if (firstHitCellID === (playerWidth ** 2) - 1) { // 63
     firstHitTurns.push('up', 'left')
-    console.log('63')
   } else if (firstHitCellID % playerWidth === playerWidth - 1 && firstHitCellID !== (playerWidth ** 2) - 1 && firstHitCellID !== playerWidth - 1) { // down right side
     firstHitTurns.push('up', 'down', 'left')
-    console.log('down right side')
   } else if (firstHitCellID === playerWidth - 1) { // 7
     firstHitTurns.push('down', 'left')
-    console.log('7')
   } else if (firstHitCellID > 0 && firstHitCellID < playerWidth - 1) { // top row
     firstHitTurns.push('right', 'down', 'left')
-    console.log('top row')
   } else { // everything else
     firstHitTurns.push('up', 'right', 'down', 'left')
-    console.log('middle')
   }
 
-  console.log(firstHitTurns)
   firstHitTurns.forEach((el, ind, arr) => {
     if (el === 'up') {
       if (playablePlayerCellsIDs.includes(firstHitCellID - playerWidth)) {
         return
       } else {
-        console.log(el + ' is not available')
-        arr[ind] = 'occupied'
+        let upCellInd = playablePlayerCellsIDs.indexOf(firstHitCellID - playerWidth)
+        let upCell = playablePlayerCells[upCellInd]
+        if (upCell.id === 'hit-' + lastHitShip.color) {
+          arr[ind] = 'upCellHit'
+        } else {
+          arr[ind] = 'thisCellHasBeenTaken'
+        }
       }
     } else if (el === 'right') {
       if (playablePlayerCellsIDs.includes(firstHitCellID + 1)) {
         return
       } else {
-        console.log(el + ' is not available')
-        arr[ind] = 'occupied'
+        let rightCellInd = allPlayerCellsIDs.indexOf(firstHitCellID + 1)
+        let rightCell = allPlayerCells[rightCellInd]
+        if (rightCell.id === 'hit-' + lastHitShip.color) {
+          arr[ind] = 'rightCellHit'
+        } else {
+          arr[ind] = 'thisCellHasBeenTaken'
+        }
       }
     } else if (el === 'down') {
       if (playablePlayerCellsIDs.includes(firstHitCellID + playerWidth)) {
         return
       } else {
-        console.log(el + ' is not available')
-        arr[ind] = 'occupied'
+        let downCellInd = allPlayerCellsIDs.indexOf(firstHitCellID + playerWidth)
+        let downCell = allPlayerCells[downCellInd]
+        if (downCell.id === 'hit-' + lastHitShip.color) {
+          arr[ind] = 'downCellHit'
+        } else {
+          arr[ind] = 'thisCellHasBeenTaken'
+        }
       }
     } else if (el === 'left') {
       if (playablePlayerCellsIDs.includes(firstHitCellID - 1)) {
         return
       } else {
-        console.log(el + ' is not available')
-        arr[ind] = 'occupied'
+        let leftCellInd = playablePlayerCellsIDs.indexOf(firstHitCellID - 1)
+        let leftCell = playablePlayerCells[leftCellInd]
+        if (leftCell.id === 'hit-' + lastHitShip.color) {
+          arr[ind] = 'leftCellHit'
+        } else {
+          arr[ind] = 'thisCellHasBeenTaken'
+        }
       }
     }
   })
-  console.log(firstHitTurns)
 
-  firstHitTurnsFilt = firstHitTurns.filter(el => el.length < 7)
-
+  firstHitTurnsFilt = firstHitTurns.filter(el => el.length < 13)
   console.log(firstHitTurnsFilt)
+
 
   randomFirstHitTurn = Math.floor(Math.random() * firstHitTurnsFilt.length)
   if (firstHitTurnsFilt[randomFirstHitTurn] === 'up') {
@@ -717,54 +758,72 @@ function nextToFirstHitCell() {
     nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID + playerWidth)
   } else if (firstHitTurnsFilt[randomFirstHitTurn] === 'left') {
     nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID - 1)
+  } else if (firstHitTurnsFilt[randomFirstHitTurn] === 'upCellHit') {
+    nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID - (playerWidth * 2))
+  } else if (firstHitTurnsFilt[randomFirstHitTurn] === 'rightCellHit') {
+    nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID + 2)
+  } else if (firstHitTurnsFilt[randomFirstHitTurn] === 'downCellHit') {
+    nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID + (playerWidth * 2))
+  } else if (firstHitTurnsFilt[randomFirstHitTurn] === 'leftCellHit') {
+    nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID - 2)
   }
+
   nextTurns = firstHitTurnsFilt[randomFirstHitTurn]
   nextTurnCell = playablePlayerCells[nextTurnInd]
+
   checkNextCell()
 }
 
 function keepGoingThatDirection() {
-  console.log('keep going')
-  let lastTurnCellID = Number(lastTurnCell.innerHTML)
-  if (nextTurns === 'up') {
-    if (lastTurn === 'hit') {
-      nextTurnInd = playablePlayerCellsIDs.indexOf(lastTurnCellID - playerWidth)
-      console.log('keep going up')
-    } else {
-      nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID + playerWidth)
-      nextTurns = 'down'
-      console.log('cant go up so go down from first')
+  lastTurnCellID = Number(lastTurnCell.innerHTML)
+
+  if (lastTurnCell.classList.contains(lastHitShip.name)) {
+    if (nextTurns === 'up') {
+      if (lastTurn === 'hit') {
+        nextTurnInd = playablePlayerCellsIDs.indexOf(lastTurnCellID - playerWidth)
+      } else {
+        nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID + playerWidth)
+        nextTurns = 'down'
+      }
+    } else if (nextTurns === 'right') {
+      if (lastTurn === 'hit') {
+        nextTurnInd = playablePlayerCellsIDs.indexOf(lastTurnCellID + 1)
+      } else {
+        nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID - 1)
+        nextTurns = 'left'
+      }
+    } else if (nextTurns === 'down') {
+      if (lastTurn === 'hit') {
+        nextTurnInd = playablePlayerCellsIDs.indexOf(lastTurnCellID + playerWidth)
+      } else {
+        nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID - playerWidth)
+        nextTurns = 'up'
+      }
+    } else if (nextTurns === 'left') {
+      if (lastTurn === 'hit') {
+        nextTurnInd = playablePlayerCellsIDs.indexOf(lastTurnCellID - 1)
+      } else {
+        nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID + 1)
+        nextTurns = 'right'
+      }
     }
-  } else if (nextTurns === 'right') {
-    if (lastTurn === 'hit') {
-      nextTurnInd = playablePlayerCellsIDs.indexOf(lastTurnCellID + 1)
-      console.log('keep going right')
+    nextTurnCell = playablePlayerCells[nextTurnInd]
+
+    if (nextTurnCell.id === 'hit-' + lastHitShip.color) {
+      if (nextTurns === 'up') {
+        nextTurnInd = playablePlayerCellsIDs.indexOf(lastTurnCellID - (playerWidth * 2))
+      } else if (nextTurns === 'right') {
+        nextTurnInd = playablePlayerCellsIDs.indexOf(lastTurnCellID + 2)
+      } else if (nextTurns === 'down') {
+        nextTurnInd = playablePlayerCellsIDs.indexOf(lastTurnCellID + (playerWidth * 2))
+      } else if (nextTurns === 'left') {
+        nextTurnInd = playablePlayerCellsIDs.indexOf(lastTurnCellID - 2)
+      }
+      nextTurnCell = playablePlayerCells[nextTurnInd]
     } else {
-      nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID - 1)
-      nextTurns = 'left'
-      console.log('cant go right so go left from first')
+      checkNextCell()
     }
-  } else if (nextTurns === 'down') {
-    if (lastTurn === 'hit') {
-      nextTurnInd = playablePlayerCellsIDs.indexOf(lastTurnCellID + playerWidth)
-      console.log('keep going down')
-    } else {
-      nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID - playerWidth)
-      nextTurns = 'up'
-      console.log('cant go down so go up from first')
-    }
-  } else if (nextTurns === 'left') {
-    if (lastTurn === 'hit') {
-      nextTurnInd = playablePlayerCellsIDs.indexOf(lastTurnCellID - 1)
-      console.log('keep going left')
-    } else {
-      nextTurnInd = playablePlayerCellsIDs.indexOf(firstHitCellID + 1)
-      nextTurns = 'right'
-      console.log('cant go left so go right from first')
-    }
+  } else {
+    nextToFirstHitCell()
   }
-
-  nextTurnCell = playablePlayerCells[nextTurnInd]
-
-  checkNextCell()
 }

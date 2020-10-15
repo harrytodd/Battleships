@@ -6,9 +6,6 @@
   font-family: AmongUs2; src: url(./among-us2.ttf);
 }
 
-
-
-
 * {
   box-sizing: border-box;
 }
@@ -54,7 +51,8 @@ body {
   align-items: center;
 }
 
-.length-butt {
+.length-butt,
+.start-butt {
   width: 200px;
   height: 75px;
   border: 3px solid white;
@@ -73,8 +71,11 @@ h1 {
 }
 
 .selected {
-  background-color: #535353;
-  color: #737373;
+  background: none;
+  font-size: 0px;
+  border: none;
+  box-shadow: none;
+
 }
 
 .color {
@@ -121,6 +122,7 @@ h1 {
   background-image: url(./images/red-ghost.png);
   background-size: contain;
   background-position: center;
+  animation: hover 2s infinite linear;
 }
 
 #pink {
@@ -139,6 +141,7 @@ h1 {
   background-image: url(./images/pink-ghost.png);
   background-size: contain;
   background-position: center;
+  animation: hover 2s infinite linear;
 }
 
 #black {
@@ -157,6 +160,7 @@ h1 {
   background-image: url(./images/black-ghost.png);
   background-size: contain;
   background-position: center;
+  animation: hover 2s infinite linear;
 }
 
 #brown {
@@ -175,6 +179,7 @@ h1 {
   background-image: url(./images/brown-ghost.png);
   background-size: contain;
   background-position: center;
+  animation: hover 2s infinite linear;
 }
 
 #blue {
@@ -193,6 +198,7 @@ h1 {
   background-image: url(./images/blue-ghost.png);
   background-size: contain;
   background-position: center;
+  animation: hover 2s infinite linear;
 }
 
 #orange {
@@ -211,6 +217,7 @@ h1 {
   background-image: url(./images/orange-ghost.png);
   background-size: contain;
   background-position: center;
+  animation: hover 2s infinite linear;
 }
 
 #cyan {
@@ -229,6 +236,7 @@ h1 {
   background-image: url(./images/cyan-ghost.png);
   background-size: contain;
   background-position: center;
+  animation: hover 2s infinite linear;
 }
 
 #green {
@@ -247,10 +255,11 @@ h1 {
   background-image: url(./images/green-ghost.png);
   background-size: contain;
   background-position: center;
+  animation: hover 2s infinite linear;
 }
 
 #color-hide {
-  background-color: none;
+  background: none;
   border: none;
 }
 
@@ -277,15 +286,6 @@ h1 {
 
 .start-game {
   display: none;
-  width: 200px;
-  height: 75px;
-  border: 3px solid white;
-  border-radius: 10px;
-  background-color: black;
-  color: white;
-  font-family: AmongUs2;
-  font-size: 30px;
-  box-shadow: 0 5px 0 #dbdbdb;
 }
 
 .cell {
@@ -315,6 +315,16 @@ h1 {
   height: 100vh;
   justify-content: space-evenly;
   align-items: center;
+}
+
+.click-block {
+  display: none;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100vh;
+  width: 100vw;
+  background: none;
 }
 
 .player-grid,
@@ -348,7 +358,7 @@ h1 {
 
 #miss {
   background-image: url(./images/gun.png);
-  background-size: cover;
+  background-size: 81px 81px;
 }
 
 
@@ -403,6 +413,10 @@ h1 {
   display: flex;
 }
 
+.show-block {
+  display: block;
+}
+
 @keyframes fadeIn {
   0% {
     opacity: 0;
@@ -413,5 +427,15 @@ h1 {
   }
 }
 
-
+@keyframes hover {
+  0% {
+    background-position-y: 1px;
+  }
+  50% {
+    background-position-y: -3px;
+  }
+  100% {
+    background-position-y: 1px;
+  }
+}
 
