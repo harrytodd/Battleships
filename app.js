@@ -111,10 +111,10 @@ function compGridGen() {
 class playerShips {
   constructor(name, length, color, orientation) {
     this.name = name,
-      this.length = length,
-      this.color = color,
-      this.orientation = orientation,
-      this.position
+    this.length = length,
+    this.color = color,
+    this.orientation = orientation,
+    this.position,
     this.hitPositions = []
   }
   shipDestroyed() {
@@ -594,7 +594,7 @@ function compTurn() {
         }
 
         nextTurnCell = playablePlayerCells[nextTurnInd]
-        checkNextCell()
+        checkNextCell() 
       }
 
     } else if (lastTurn === 'hit' && lastTurnCell !== firstHitCell) {
