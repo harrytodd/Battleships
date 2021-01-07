@@ -150,6 +150,13 @@ I wanted to make the game very easy flowing with a lot of sounds to keep you int
 
 This project was a huge learning experience, having been my first ever unguided project there were a lot of challenges but also a lot of wins. Now looking back, this is still my favourite project I have done and I couldn't be more proud of myself.
 
-I learned how to manage my time and to not get hung up on styling before the game is even functional. My first playable version looked like it was straight out of the 80s! But from that I could very easily turn it into what it is now as all of the functionality was there, I just had to plug in the styles.
+There are a couple of circumstantial bugs that I was not able to fix:
+
+1. If the player puts their 'ships' next to each other, the computer cannot differentiate them so does not know where one ends and another begins.
+2. If the computer is currently hitting a long 'ship' but the next move in the line is a cell that has already been a miss, the game crashes.
+
+I have only came across the latter once in testing and a good Battleships player never puts their ships next to each other, so this one should not come up too often.
+
+During this project I learned how to manage my time and to not get hung up on styling before the game is even functional. My first playable version looked like it was straight out of the 80s! But from that I could very easily turn it into what it is now as all of the functionality was there, I just had to plug in the styles.
 
 Link --> [Battleships](https://harrytodd.github.io/Battleships/)
